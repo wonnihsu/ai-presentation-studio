@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node server.js",
     "build": "vite build",
-    "test": "node src/deck.test.js",
+    "test": "node src/deck.test.js && node src/design-library.test.js",
     "build:portable": "vite build --mode portable --outDir portable"
   },
   "dependencies": {
