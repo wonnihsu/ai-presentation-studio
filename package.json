@@ -1,0 +1,20 @@
+{
+  "name": "ai-presentation-studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "vite build",
+    "test": "node src/deck.test.js",
+    "build:portable": "vite build --mode portable --outDir portable"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "pptxgenjs": "^4.0.1",
+    "vite": "^6.1.0"
+  },
+  "devDependencies": {
+    "vite-plugin-singlefile": "^2.3.4"
+  }
+}
