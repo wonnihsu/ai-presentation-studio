@@ -1,2 +1,81 @@
-# ai-presentation-studio
-AI-powered presentation generator with editable PowerPoint export.
+# Slideform — AI Presentation Studio
+
+繁體中文簡報工作室：建立大綱、逐頁編輯、三款視覺風格、本機自動儲存，以及可編輯的 PowerPoint 匯出。
+
+## 開發
+
+需要 Node.js 22 以上版本（已使用 Node.js 24 驗證）。
+
+```sh
+npm ci
+npm run dev
+```
+
+預設使用 5173 埠，可用 `PORT` 調整。開發模式使用 Vite，前端與 API 由同一伺服器提供。
+
+```sh
+npm test
+npm run build
+NODE_ENV=production npm run dev
+```
+
+## AI 設定（選用）
+
+未設定金鑰時，範本模式可正常使用。範本是待補充的寫作結構，不是 AI 生成或經查證的研究資料。
+
+在執行伺服器的環境安全設定 `AI_API_KEY`（也支援 `OPENAI_API_KEY`），以及選用的 `AI_MODEL`（預設 `gpt-4o-mini`）。伺服器使用 OpenAI Chat Completions API，需允許 HTTPS 存取 `api.openai.com`。金鑰僅留在伺服器，不會傳給瀏覽器。不要將金鑰提交到 Git；伺服器不會自動讀取 .env。
+
+AI 生成會把填寫的主題與聽眾對象傳給 OpenAI，可能產生 API 費用。AI 輸出仍需人工核實。
+
+## 操作與限制
+
+- 輸入主題、聽眾與 3–10 頁，選擇範本或可用的 AI 生成方式。
+- 重新建立會要求確認，以免覆蓋編輯內容。
+- 點選頁面縮圖後編輯標題、副標題與最多六項重點。
+- 自動儲存僅限目前瀏覽器；不含帳號、雲端同步或版本歷史。清除瀏覽器資料會失去草稿。
+- PPTX 以原生文字方塊匯出，文字可編輯。長文會自動縮小，請仍在 PowerPoint 檢查版面與字型。
+- 目前沒有部署或公開網站網址。AI 路徑需要有效金鑰才能完整驗證。
+- 這是開發版本。公開部署前需增加登入、使用額度與速率限制，避免公開 AI API 被濫用；目前請僅在受控環境使用。
+
+## 不使用 API 金鑰的完整流程
+
+1. 直接建立範本，手動填入內容，即可匯出 PowerPoint。
+2. 若希望借助 ChatGPT：展開「使用 ChatGPT 內容（不需金鑰）」，依主題產生並複製提示詞，自行貼到 ChatGPT。
+3. 將回覆貼回網站匯入。每頁使用 `# 標題`、選用的 `> 副標題` 和 `- 重點`，以單獨一行 `---` 分頁，共 3–10 頁。也可以自行撰寫相同格式。
+4. 匯入前會驗證格式並要求確認覆蓋；失敗或取消會保留原稿。匯入後可繼續編輯、套用風格和匯出。
+
+網站不會自動存取你的 ChatGPT 帳號或傳送提示詞；複製貼上由你操作。這個流程不使用網站的 AI API，不需要 API 金鑰。ChatGPT 的使用額度與可用功能依你的帳號方案而定。
+
+## 直接開啟的免安裝版本
+
+```sh
+npm run build:portable
+```
+
+將產生 `portable/index.html`：所有 JavaScript、樣式與 PPTX 匯出套件都已包含在同一檔案，下載後可直接用桌面瀏覽器開啟，不需伺服器、不需金鑰。此版本不會嘗試連線 AI API。
+
+使用「備份草稿」下載 JSON，「開啟草稿」恢復編輯。瀏覽器對本機 HTML 的儲存支援可能不同，請定期備份；可編輯 PPTX 不等同於可重新匯入的草稿 JSON。
+
+此 HTML 也可以直接放到靜態網頁託管服務。它不包含帳號或跨裝置同步。下載版不等同公開部署；公開網址需另行部署到你的託管服務。
+
+## Mac／iCloud 的含圖工作流程（免 API）
+
+1. 輸入主題、概述與目的、聽眾、頁數和整體圖片風格。產生提示詞，交給 ChatGPT 規劃內容，再將文字匯入。
+2. 在每一頁「本頁圖片」產生生圖提示詞，複製到 ChatGPT。圖片依你的 ChatGPT 方案與額度生成，網站不會自動連線生圖。
+3. 將生成後下載的圖片選入或拖入該頁。支援 PNG、JPEG、WebP，單張原檔上限 12 MB、4,000 萬像素。HEIC 請先以 Mac「預覽程式」轉成 JPEG。
+4. 選擇圖片置左或置右、完整顯示或填滿裁切。每頁目前支援一張圖、固定雙欄配置，尚無自由拖曳、多圖或裁切焦點調整。
+5. 圖片在瀏覽器內縮小至最長邊 1600 像素，轉成 JPEG（透明區域為白色）；原始檔不會被覆寫，也不會上傳。高解析度原圖請另行保留。
+6. 「備份草稿」下載的 JSON 包含文字、圖片、風格與版面。請在瀏覽器的下載位置／另存設定選擇 Mac 資料夾或 iCloud Drive。系統不會直接存取 iCloud 帳號或任意寫入 Mac 資料夾。
+7. 下次用「開啟草稿」選取 JSON，即可繼續編輯。可開啟舊的純文字草稿；含圖草稿檔上限 32 MB。瀏覽器自動儲存有容量限制，含圖簡報尤其應定期備份。
+8. 用「新增簡報」開始下一個主題。請先備份舊草稿，確認後才會清空。
+9. 匯出 PPTX 包含可編輯的文字與圖片物件；填滿模式的圖片已依版面裁切，原圖仍保留在 JSON 草稿。PPTX 不是此工具的草稿匯入格式。
+
+目前在雲端 Chromium 驗證含圖的規劃提示詞、圖片選取與拖入、圖文排版、含圖備份／恢復、新簡報、移除圖片、離線匯出與行動版寬度。Mac Safari 與 Apple Keynote 尚未實測，PowerPoint／Keynote 的字型與呈現仍需在實際裝置檢查。
+
+## GitHub Pages 部署
+
+儲存庫 Settings → Pages → Source 選擇 GitHub Actions。`.github/workflows/pages.yml` 會在 main 更新後執行測試、產生免金鑰單檔 HTML 並發布至 Pages。不會發布 Express 伺服器，也不需要 API 金鑰或額外 Secrets。
+
+部署成功後，在 Actions 的部署作業或 Settings → Pages 查看實際網站網址。網頁使用者的草稿與圖片仍在各自瀏覽器／本機備份檔，不會上傳到儲存庫。
+
+若要離線使用 Mac 版本：打開成功的 Actions 執行紀錄，在 Artifacts 下載 `Slideform-Mac-website`，解壓縮並開啟 `index.html`。瀏覽器必須登入有權存取該儲存庫的 GitHub 帳號才能下載 Actions artifact。Artifact 有保存期限，請下載後自行保留。可將草稿 JSON 存到 iCloud Drive；此工具不會自動同步。
